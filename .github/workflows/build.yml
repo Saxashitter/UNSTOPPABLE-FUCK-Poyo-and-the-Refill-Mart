@@ -86,7 +86,6 @@ jobs:
         with:
           app-name: ${{ env.PRODUCT_NAME }}
           bundle-id: ${{ env.BUNDLE_ID }}
-          icon-specifier: "@mipmap/icon"
           love-package: ${{ env.CORE_LOVE_PACKAGE_PATH }}
           resource-path: ./.github/build/android/${{ env.BUILD_TYPE }}/res
           extra-assets: ./libAndroid/
