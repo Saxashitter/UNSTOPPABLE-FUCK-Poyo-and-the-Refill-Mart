@@ -5,6 +5,8 @@ env:
   PRODUCT_NAME: UNSTOPPABLEFUCK
   BUNDLE_ID: com.saxashitter.ufpatrf
 
+on: [push]
+
 jobs:
   build-windows:
     runs-on: windows-latest
