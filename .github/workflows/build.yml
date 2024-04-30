@@ -21,7 +21,6 @@ jobs:
       - name: Build core love package
         uses: love-actions/love-actions-core@v1
         with:
-          build-list: ./assets/ ./characters/ ./classes/ ./libs/ ./maps/ ./modules/ ./states/ ./conf.lua ./main.lua
           package-path: ${{ env.CORE_LOVE_PACKAGE_PATH }}
       - name: Upload core love package
         uses: actions/upload-artifact@v3
@@ -80,6 +79,11 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: ${{ env.CORE_LOVE_ARTIFACT_NAME }}
+      - name: Make folders
+        shell: bash
+        run: |
+          mkdir -p ./libAndroid/armeabi-v7a/
+          mkdir -p ./libAndroid/arm64-v8a/
       - name: Build Android packages
         id: build-packages
         uses: love-actions/love-actions-android@v1
