@@ -49,9 +49,7 @@ function states.preload(newState,...)
 	end
 	
 	if stateFiles[newState].load and not stateFiles[newState].preloaded then
-		objects = {}
-		objhash = shash.new(128)
-		tiles = {}
+		states.nextState = newState
 		stateFiles[newState].preloaded = true
 		stateFiles[newState].load(...)
 	end
@@ -72,13 +70,7 @@ function states.switch(newState,...)
 		stateFiles[currentState].exit()
 	end
 
-	if stateFiles[newState].load and not stateFiles[newState].preloaded then
-		objects = {}
-		tiles = {}
-		objhash = shash.new(128)
-		stateFiles[newState].preloaded = true
-		stateFiles[newState].load(...)
-	end
+	states.preload(newState,...)
 
 	if stateFiles[newState].enter then
 		stateFiles[newState].enter()

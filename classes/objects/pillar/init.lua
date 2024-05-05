@@ -21,7 +21,7 @@ return classes.Object:extend('Pillar', {
 		if obj.type2 ~= "Player" then return end
 		if obj.flags.passtiles == 2 then return end
 		if not obj.flags.candamage then return end
-		self:kill()
+		objhash:remove(self)
 		functions.startEscapeSequence()
 	end
 })

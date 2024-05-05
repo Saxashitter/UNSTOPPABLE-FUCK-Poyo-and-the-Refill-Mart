@@ -33,7 +33,10 @@ local function resolveCollision(self, obj, woh)
 	end
 
 	self[pos] = self[pos] - (self_area - obj_area)
-	objhash:update(self, self.x,self.y,self.width,self.height)
+	local state = states.getState(states.nextState)
+	if state and state.shash then
+		state.shash:update(self, self.x,self.y,self.width,self.height)
+	end
 	self.t_collisions[type] = true
 
 	return type,og_pos
@@ -46,9 +49,6 @@ return classes['Object']:extend('Block', {
 		self.super.init(self, x, y)
 		
 		self.collisions = {}
-		
-		self:kill()
-		table.insert(tiles, self)
 
 		self.width = width
 		self.height = height
@@ -60,7 +60,22 @@ return classes['Object']:extend('Block', {
 			self[_] = i
 		end
 
-		objhash:update(self, self.x,self.y,self.width,self.height)
+		local state = states.getState(states.nextState)
+		if state and state.shash then
+			state.shash:update(self, self.x,self.y,self.width,self.height)
+		end
+	end,
+	postTileSet = function(self)
+		local isSlope = self:isSlope()
+
+		if isSlope then
+			if self.lefttile then
+				self.lefttile.collision_x = false
+			end
+			if self.righttile then
+				self.righttile.collision_x = false
+			end
+		end
 	end,
 	draw = function(self)
 		local x,y,w,h = rs.get_game_zone()
@@ -90,6 +105,7 @@ return classes['Object']:extend('Block', {
 	
 		if y1 == y2 then
 			-- and then return that shit because is the slopes y for both left and right
+			-- "why didnt u do that earlier-" bc theres a chance someone will do it in their map for half platforms or smth
 			return y1 or 0
 		end
 	
@@ -112,6 +128,9 @@ return classes['Object']:extend('Block', {
 		
 		return math.min(self.height, math.max(0, ((mx*midp)+b)))
 		-- slopes like to fuck up when your too down or too up, so return with some clamping
+	end,
+	isSlope = function(self)
+		return (self.y2 ~= nil and self.y1 ~= nil) and (self.y1 ~= self.y2)
 	end,
 	canCollide = function(self, obj, type)
 		if obj.type ~= 2 then return false end
@@ -138,7 +157,14 @@ return classes['Object']:extend('Block', {
 
 		local type = resolveCollision(obj, self, type)
 		if type then
-			obj:tileCollision(type, slope)
+			local collisions = obj:tileCollision(type, self) or {false, false}
+			if (type == "left"
+			or type == "right")
+			and not collisions[1] then
+				obj.momx = 0
+			elseif not collisions[2] then
+				obj.momy = 0
+			end
 		end
 	end
 })

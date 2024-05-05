@@ -1,26 +1,36 @@
 local functions = {}
 
 local song_priority = 0
-local curMusic = nil
+local curName
+local curMusic
+
+function functions.preloadMusic(name)
+	curName = name
+	curMusic = love.audio.newSource('assets/music/'..name..".ogg", "stream")
+end
 
 function functions.changeMusic(name, priority, loop)
 	if not priority then priority = 0 end
 	if song_priority > priority then return end
 
-	TEsound.stop('music')
-	local play = TEsound.play
-	if loop then play = TEsound.playLooping end
+	if name ~= curName then
+		if curMusic then
+			curMusic:stop()
+		end
+		functions.preloadMusic(name)
+	end
 
-	local val1 = loop and nil or 0.5
-	local val2 = loop and 0.5 or nil
-	play("assets/music/"..name..".ogg", "stream", {"music"}, val1, val2)
+	if loop == nil then loop = true end
+	curMusic:setLooping(loop)
+	curMusic:play()
+	curMusic:setVolume(.7)
 	song_priority = priority
 	
-	curMusic = name
+	return curMusic
 end
 
 function functions.startSound(name,tag,vol)
-	TEsound.play("assets/sounds/"..name..".wav", "static", {"sound", tag}, vol)
+	local sound = love.audio.newSource("assets/sounds/"..name..".wav", "static"):play()
 end
 
 function functions.setMusicPriority(value)
@@ -37,7 +47,7 @@ function functions.startEscapeSequence()
 	
 	if state.escape_sequence then return end
 	
-	functions.changeMusic('skedaddle', 1)
+	functions.changeMusic('skedaddle')
 	state.escape_sequence = true
 end
 

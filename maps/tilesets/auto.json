@@ -1,0 +1,172 @@
+{
+autotiles: [
+	{
+		name: heh
+		properties: [
+			{
+				name: type
+				value: assembly
+			}
+			{
+				name: "0,0"
+				value: 226
+			}
+			{
+				name: "1,0"
+				value: 227
+			}
+			{
+				name: "2,0"
+				value: 228
+			}
+			{
+				name: "3,0"
+				value: 229
+			}
+			{
+				name: "4,0"
+				value: 230
+			}
+			{
+				name: "5,0"
+				value: 231
+			}
+			{
+				name: "6,0"
+				value: 232
+			}
+		]
+	}
+	{
+		name: test
+		properties: [
+			{
+				name: type
+				value: assembly
+			}
+			{
+				name: "0,0"
+				value: 76
+			}
+			{
+				name: "1,0"
+				value: 76
+			}
+			{
+				name: "2,0"
+				value: 76
+			}
+			{
+				name: "3,0"
+				value: 76
+			}
+			{
+				name: "4,0"
+				value: 76
+			}
+			{
+				name: "5,0"
+				value: 76
+			}
+		]
+	}
+	{
+		name: groun
+		properties: [
+			{
+				name: type
+				value: assembly
+			}
+			{
+				name: "0,0"
+				value: 195
+			}
+			{
+				name: "1,0"
+				value: 196
+			}
+			{
+				name: "2,0"
+				value: 197
+			}
+			{
+				name: "3,0"
+				value: 198
+			}
+			{
+				name: "4,0"
+				value: 199
+			}
+		]
+	}
+	{
+		name: BGGGG
+		properties: [
+			{
+				name: type
+				value: assembly
+			}
+			{
+				name: "0,0"
+				value: 327
+			}
+			{
+				name: "1,0"
+				value: 419
+			}
+			{
+				name: "2,0"
+				value: 420
+			}
+			{
+				name: "3,0"
+				value: 421
+			}
+			{
+				name: "4,0"
+				value: 327
+			}
+			{
+				name: "0,1"
+				value: 327
+			}
+			{
+				name: "1,1"
+				value: 327
+			}
+			{
+				name: "2,1"
+				value: 327
+			}
+			{
+				name: "3,1"
+				value: 389
+			}
+			{
+				name: "4,1"
+				value: 358
+			}
+			{
+				name: "0,2"
+				value: 486
+			}
+			{
+				name: "1,2"
+				value: 487
+			}
+			{
+				name: "2,2"
+				value: 327
+			}
+			{
+				name: "3,2"
+				value: 327
+			}
+			{
+				name: "4,2"
+				value: 327
+			}
+		]
+	}
+]
+}

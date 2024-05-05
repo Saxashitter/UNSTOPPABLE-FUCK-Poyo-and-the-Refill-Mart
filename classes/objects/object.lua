@@ -1,6 +1,7 @@
 local function uhm(self,type)
 	local collisions = {}
-	objhash:each(self, function(obj)
+	local state = states.getState(states.nextState)
+	state.shash:each(self, function(obj)
 		if self:colliding(obj) then
 			table.insert(collisions, obj)
 		end
@@ -27,8 +28,6 @@ return class('Object', {
 
 		self.x = x
 		self.y = y
-		self.prevx = prevx
-		self.prevy = prevy
 
 		self.momx = 0
 		self.momy = 0
@@ -47,69 +46,76 @@ return class('Object', {
 
 		self.dir = 1
 
-		objhash:add(self, self.x,self.y,self.width,self.height)
-		
-		if not objects[self.type] then objects[self.type] = {} end
-		if not objects[self.type][self.type2] then objects[self.type][self.type2] = {} end
-		table.insert(objects[self.type][self.type2], self)
-		self.parent_index = #objects[self.type][self.type2]
-		self.parent = objects[self.type][self.type2]
-		
+		local state = states.getState(states.nextState)
+		if state and state.shash then
+			state.shash:add(self, self.x,self.y,self.width,self.height)
+		end
+
 		self.preloaded = true
 	end,
 	update = function(self, dt)
 		if self.flags.noupdate then return end
 		
-		self.t_collisions = {}
 		
-		self.prevx = 0
-		self.prevy = 0
-
-		--local multi = dt/(1/60)
-		local multi = dt/(1/60)
-
-		self.x = self.x + (self.momx*multi)
+		self:move(dt)
+		self:changeDirection()
+	end,
+	changeDirection = function(self)
 		if self.momx > 0 then
 			self.dir = 1
 		elseif self.momx < 0 then
 			self.dir = -1
 		end
-		objhash:update(self, self.x,self.y,self.width,self.height)
-		uhm(self,false)
-
-		local groundy = 0
-		self.wassloping = self.sloping
-		self.sloping = false
-		if self.flags.grounded then
-			objhash:each(self.x,self.y+self.height,self.width,self.height,function(obj)
-				if obj.type ~= 1 then return end
-				if obj.y1 == nil then
-					if obj.y > groundy then
-						groundy = obj.y
-					end
-					return
-				end
-				
-				self.y = obj.y + obj:slope(self.x, self.width) - self.height
-				self.sloping = true
-			end)
-			if not self.sloping and self.wassloping then
-				-- if groundy-(self.y+self.height) <= 40
-				-- and groundy-(self.y+self.height) > 32 then
-					self.y = groundy-self.height
-				--end
+	end,
+	move = function(self, dt)
+		local multi = (dt/(1/60))/4
+		
+		for i = 1,4 do
+			self.t_collisions = {}
+			self.x = self.x + (self.momx*multi)
+	
+			local state = states.getState(states.nextState)
+			if state and state.shash then
+				state.shash:update(self, self.x,self.y,self.width,self.height)
 			end
+			uhm(self,false)
+	
+			local groundy = 0
+			self.wassloping = self.sloping
+			self.sloping = false
+			if self.flags.grounded then
+				state.shash:each(self.x,self.y+self.height,self.width,self.height,function(obj)
+					if obj.type ~= 1 then return end
+					if obj.y1 == nil then
+						if obj.y > groundy then
+							groundy = obj.y
+						end
+						return
+					end
+					
+					self.y = obj.y + obj:slope(self.x, self.width) - self.height
+					self.sloping = true
+				end)
+				if not self.sloping and self.wassloping then
+					-- if groundy-(self.y+self.height) <= 40
+					-- and groundy-(self.y+self.height) > 32 then
+						self.y = groundy-self.height
+					--end
+				end
+			end
+	
+			if not self.flags.nogravity and not self.sloping then
+				self.momy = self.momy + (gravity*multi)
+				self.flags.grounded = false
+			end
+	
+			self.momy = math.max(-gravity*(32*4), math.min(self.momy, gravity*(32*4)))
+			self.y = self.y + (self.momy*multi)
+			if state and state.shash then
+				state.shash:update(self, self.x,self.y,self.width,self.height)
+			end
+			uhm(self,true)
 		end
-
-		if not self.flags.nogravity and not self.sloping then
-			self.momy = self.momy + (gravity*multi)
-			self.flags.grounded = false
-		end
-
-		self.momy = math.max(-gravity*(32*4), math.min(self.momy, gravity*(32*4)))
-		self.y = self.y + (self.momy*multi)
-		objhash:update(self, self.x,self.y,self.width,self.height)
-		uhm(self,true)
 	end,
 	collision = function(self, obj, type)
 	end,
@@ -131,8 +137,5 @@ return class('Object', {
 	end,
 	remove_from_hash = function(self)
 		objhash:remove(self)
-	end,
-	kill = function(self)
-		self.parent[self.parent_index] = nil
 	end
 })

@@ -1,11 +1,11 @@
 states = require('libs.states')
-json = require('libs.json')
+-- json = require('libs.json')
 debug = require('libs.print')
 class = require('libs.30log')
 shash = require('libs.shash')
 Camera = require('libs.camera')
 animations = require('libs.animations')
-TEsound = require('libs.TEsound')
+slam = require('libs.slam')
 moonshine = require('libs.moonshine')
 rs = require('libs.resolution_solution')
 suit = require('libs.suit')
@@ -149,7 +149,6 @@ function love.resize(width, height)
 end
 
 function love.update(dt)
-	TEsound.cleanup()
 	controls:update(dt)
 	timer:update(dt)
 	

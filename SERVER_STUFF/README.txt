@@ -1,7 +1,9 @@
 INSTRUCTIONS:
+- note that online has been removed from the game, and you will have to recode the functionality back 
+
 - install love2d onto your commandline
 
-* if your on windows and you installed the installer, it should be in cmd already
+* if your on windows and you installed the love2d installer, it should be in cmd already
 * to test, open cmd and type love
 
 - cd to this directory
@@ -24,7 +26,7 @@ but ur own device. heres the tricky part
 
 * unless you know what ur doing, DO NOT touch anything other than sock.newServer
 
-- did u port forward? if not, do that, port forward to any port and change the
+- did u port forward? if not, do that, port forward to any udp port and change the
 - part on the end of sock.newServer to the port you forwarded
 
 - run the server again and share with friends! your welcome!

@@ -1,6 +1,7 @@
 local state = {}
 local time = 0
 local load_state = nil
+local loadsong
 local load_state_name
 
 function state.load(params)
@@ -8,7 +9,7 @@ function state.load(params)
 end
 
 function state.enter(map, char)
-	functions.changeMusic('loading', 0)
+	loadsong = functions.changeMusic('loading')
 	time = 0
 	
 	if state.params.state then
@@ -24,6 +25,7 @@ function state.update(dt)
 	time = time + dt
 	
 	if load_state and load_state.preloaded and time > 3 and state.params.state then
+		loadsong:stop()
 		states.switch(state.params.state)
 	end
 end

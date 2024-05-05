@@ -32,10 +32,10 @@ return classes['Object']:extend('Player', {
 			self.character.collision(self, obj, type)
 		end
 	end,
-	tileCollision = function(self,type)
-		self.super.tileCollision(self,type)
+	tileCollision = function(self,type,obj)
+		self.super.tileCollision(self,type,obj)
 		if self.character.tileCollision then
-			self.character.tileCollision(self, type)
+			return self.character.tileCollision(self, type, obj)
 		end
 	end
 })

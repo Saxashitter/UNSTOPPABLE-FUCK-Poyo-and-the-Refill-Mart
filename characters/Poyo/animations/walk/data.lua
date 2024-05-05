@@ -3,6 +3,6 @@ return {
 		if frame ~= 1
 		and frame ~= 5 then return end
 
-		functions.startSound('step'..love.math.random(8), 'player')
+		player.sounds['step'..love.math.random(8)]:play()
 	end
 }
