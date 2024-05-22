@@ -78,6 +78,11 @@ end
 
 local function changeAnim(self, animation, framerate, loop, obj)
 	if not self.frames[animation] then return end
+	if self.frames[self.curAnim]
+	and self.frames[self.curAnim].onChange then
+		self.frames[self.curAnim].onChange(self.parent)
+	end
+		
 	self.curAnim = animation
 	self.frame = 1
 	self.time = 0

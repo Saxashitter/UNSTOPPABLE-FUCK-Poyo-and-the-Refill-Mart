@@ -1,7 +1,30 @@
+local path = (...):replace(".", "/")
 local fsm = {}
+local curState
+
+local function changeState(fsm, player, state)
+	if not fsm.states[state] then error('INVALID STATE, STUPID!') return end
+
+	if curState and curState.exit then
+		curState:exit(player, state)
+	end
+
+	curState = fsm.states[state]
+	
+	if curState and curState.enter then
+		curState:enter(player, state)
+	end
+end
+
+setmetatable(fsm, {
+	__call = changeState,
+	__index = function(self, key)
+		if not curState then return end
+		return curState[key]
+	end
+})
 
 fsm.states = {}
-fsm.curState = nil
 
 local function addStates(dir)
 	for _,file in ipairs(love.filesystem.getDirectoryItems(dir)) do
@@ -18,20 +41,6 @@ local function addStates(dir)
 	end
 end
 
-addStates('characters/Poyo/fsm/states/')
-
-function fsm:changeState(player, state)
-	if not self.states[state] then error('INVALID STATE, STUPID!') return end
-
-	if self.curState and self.curState.exit then
-		self.curState:exit(player, state)
-	end
-
-	self.curState = self.states[state]
-	
-	if self.curState and self.curState.enter then
-		self.curState:enter(player, state)
-	end
-end
+addStates(path..'/states/')
 
 return fsm

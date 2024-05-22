@@ -1,6 +1,3 @@
-local state = {}
-local player,entities
-
 local function stayWithinBoundaries(x, y, min_x, min_y, max_x, max_y)
 	local new_x,new_y = x,y
 
@@ -33,22 +30,22 @@ local function positionCamera(dt)
 	local sw = rs.game_width/2
 	local sh = rs.game_height/2
 	
-	x,y = stayWithinBoundaries(x, y, sw, sh, state.curMap.width-sw, state.curMap.height-sh)
+	x,y = stayWithinBoundaries(x, y, sw, sh, curMap.width-sw, curMap.height-sh)
 
 	camera.x,camera.y = x,y
 end
 
 local function loadMap(mapname, char)
-	state.curMap,player,entities = map:load(mapname, char)
+	curMap,player,entities = map:load(mapname, char)
 
 	if not player then
 		player = classes.Player(0, 0, char)
 	end
 end
 
-function state.load(mapn, character, multiplayer)
+function load(mapn, character, multiplayer)
 	camera = Camera(0,0)
-	state.shash = shash.new(128)
+	shash = shash.new(128)
 	if not mapn then
 		mapn = 'fun'
 	end
@@ -58,24 +55,24 @@ function state.load(mapn, character, multiplayer)
 	
 	loadMap(mapn, character)
 
-	state.escape_sequence = false
+	escape_sequence = false
 
 	positionCamera(1/60)
 end
 
-function state.enter()
+function enter()
 	player.sounds.voice_start:play()
 	timer(2, function()
-		state.curMap:playMusic()
+		curMap:playMusic()
 		player.flags.canmove = true
 	end)
 end
 
-function state.update(dt)
+function update(dt)
 	local rate = 4
 	player:update(dt)
 	
-	if player.y > state.curMap.height then
+	if player.y > curMap.height then
 		switchToMenu()
 		return
 	end
@@ -95,11 +92,11 @@ function state.update(dt)
 	positionCamera(dt/(1/60))
 end
 
-function state.draw()
+function draw()
 	camera:attach()
 	local old_x, old_y, old_w, old_h = love.graphics.getScissor()
 	love.graphics.setScissor(rs.get_game_zone())
-	for _,layer in pairs(state.curMap.data) do
+	for _,layer in pairs(curMap.data) do
 		for _,y in pairs(layer) do
 			for _,x in pairs(y) do
 				x:draw()
@@ -111,5 +108,3 @@ function state.draw()
 	love.graphics.setScissor(old_x, old_y, old_w, old_h)
 	camera:detach()
 end
-
-return state

@@ -32,7 +32,14 @@ local function defaultInitialize(stateFile)
 end
 
 local function add(stateName)
-	stateFiles[stateName] = require("states."..stateName)
+	local stateFunc = love.filesystem.load("states/"..stateName..".lua")
+	local state = {}
+
+	setfenv(stateFunc, state)
+	setmetatable(state, {__index = _G})
+	stateFunc()
+
+	stateFiles[stateName] = state
 	defaultInitialize(stateFiles[stateName])
 end
 

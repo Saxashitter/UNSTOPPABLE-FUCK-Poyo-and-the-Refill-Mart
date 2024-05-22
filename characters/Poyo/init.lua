@@ -1,3 +1,6 @@
+local path = {...}
+path = path[1]
+
 local Poyo = {}
 
 -- DON'T BE FOOLED!
@@ -6,28 +9,39 @@ local Poyo = {}
 
 local funcs = {}
 
-local function changeDir(self)
-	if not controls:isPressed('Left')
-	and not controls:isPressed('Right') then
-		return false
+local function changeDir(self, bool)
+	if not (self.flags.canchangedir or bool ~= nil) then return end
+	
+	if bool == nil then
+		bool = self.flags.grounded
 	end
 
-	if self.momx > 0 then
-		self.dir = 1
-	elseif self.momx < 0 then
-		self.dir = -1
+	if bool then
+		if self.momx > 0 then
+			self.dir = 1
+		elseif self.momx < 0 then
+			self.dir = -1
+		end
+	else
+		if controls:isPressed('Left') then
+			self.dir = -1
+		elseif controls:isPressed('Right') then
+			self.dir = 1
+		end
 	end
 end
 
 function funcs:init(x, y)
 	self.name = "Poyo"
-	self.fsm = require("characters.Poyo.fsm")
-	self.animation = animations.init("characters/Poyo/animations/", "idle", 15, self)
+	self.fsm = require(path..".fsm")
+	self.animation = animations.init(path:replace(".", "/").."/animations/", "idle", 15, self)
 
 	self.flags.jumpheld = false
+	self.flags.canchangedir = true
+	self.flags.lerpangle = true
 
 	self.acceleration = 0.3
-	self.deceleration = 0.6
+	self.deceleration = 0.45
 
 	self.changeDirection = changeDir
 
@@ -55,7 +69,7 @@ function funcs:init(x, y)
 	}
 	self.sounds.voice_start:setVolume(.45)
 
-	self.fsm:changeState(self, "base")
+	self:fsm("base")
 	local state = states.getState(states.nextState)
 	if state and state.shash then
 		state.shash:update(self, self.x,self.y,self.width,self.height)
@@ -63,39 +77,55 @@ function funcs:init(x, y)
 end
 
 function funcs:update(dt)
-	self.fsm.curState:update(self, dt)
+	self.fsm:update(self, dt)
 	self.animation:update(dt, self)
+	local state = states.getState()
+
+	local angle = 0
+	if self.map then
+		local block = self.map:raycast(self.x+(self.width/2), self.y, 0, 1, self.height*2)
+		if block then
+			block = block[1]
+		end
+		if self.flags.grounded 
+		and block
+		and block:isSlope() then
+			print "Slope"
+			angle = lume.angle(block.x,
+				block.y+block.y1,
+				block.x+block.width,
+				block.y+block.y2
+			)
+		end
+	end
+
+	self.lerpangle = angle
 
 	self.super.update(self, dt)
 end
 
 function funcs:draw()
 	local img = self.animation.frames[self.animation.curAnim][self.animation.frame].image
-	local width = img:getWidth()
+	local width = img:getWidth()/2
 	local height = img:getHeight()
-	self.animation:draw(self.x+(self.width/2), self.y+self.height, 0, self.dir, 1, width/2, height)
+	
+	local pos_width = (self.width/2)+(20*(-math.sin(self.angle)))
+	local pos_height = self.height+1
+	
+	self.animation:draw(self.x+pos_width, self.y+pos_height, self.angle, self.dir, 1, width, height)
 
 	self.super.draw(self)
 end
 
-function funcs:jump(player, height)
-	if player.flags.grounded and controls:isJustPressed('Jump') then
-		player.flags.jumpheld = true
-		player.flags.grounded = false
-		player.momy = -height
-		player.sounds.jump:play()
-	end
-end
-
 function funcs:collision(obj, type)
-	if self.fsm.curState.collision then
-		self.fsm.curState:collision(self, obj, type)
+	if self.fsm.collision then
+		self.fsm:collision(self, obj, type)
 	end
 end
 
 function funcs:tileCollision(type, obj)
-	if self.fsm.curState.tileCollision then
-		return self.fsm.curState:tileCollision(self, type, obj)
+	if self.fsm.tileCollision then
+		return self.fsm:tileCollision(self, type, obj)
 	end
 end
 

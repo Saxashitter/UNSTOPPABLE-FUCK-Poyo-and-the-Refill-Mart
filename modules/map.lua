@@ -127,6 +127,7 @@ local function loadBlockLayer(self, map, layer, char)
 			
 			if object.type == "Player" then
 				player = funny
+				player.map = self
 			end
 		elseif object.name == "camera" then
 			if object.type == "lockin" then

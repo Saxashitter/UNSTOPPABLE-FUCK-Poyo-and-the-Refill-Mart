@@ -82,6 +82,8 @@ return classes['Object']:extend('Block', {
 		
 		w,h = rs.game_width,rs.game_height -- just to be sure
 		
+		local camera = (states and states.getState()) and states.getState().camera
+		
 		x = (camera and camera.x or w/2) - w/2
 		y = (camera and camera.y or h/2) - h/2
 
@@ -90,6 +92,17 @@ return classes['Object']:extend('Block', {
 	    self.y < y+h and
 	    y < self.y+self.height) then return end
 		love.graphics.draw(self.image.image, self.image.quad, self.x, self.y)
+	end,
+	calculateSlopeSide = function(self)
+		if self:isSlope() then
+			if self.y1 > self.y2 then
+				return 1
+			elseif self.y2 > self.y1 then
+				return -1
+			end
+		end
+		
+		return 0
 	end,
 	slope = function(self, x, width)
 		-- OUR SLOPE FUNCTION!!
@@ -109,14 +122,8 @@ return classes['Object']:extend('Block', {
 			return y1 or 0
 		end
 	
-		local side = 0
+		local side = self:calculateSlopeSide()
 		local midp = x+(width/2)
-	
-		if y1 > y2 then
-			side = 1
-		elseif y2 > y1 then
-			side = -1
-		end
 		
 		midp = midp+((width/2)*side)
 		-- feel free to omit the side code if your making the center do slope collision

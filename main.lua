@@ -1,4 +1,3 @@
-states = require('libs.states')
 -- json = require('libs.json')
 debug = require('libs.print')
 class = require('libs.30log')
@@ -18,6 +17,9 @@ networking = require('modules.networking')
 functions = require('modules.functions')
 timer = require('libs.timer')
 tween = require('libs.tween')
+lume = require('libs.lume')
+
+states = require('libs.states')
 
 require('classes')
 

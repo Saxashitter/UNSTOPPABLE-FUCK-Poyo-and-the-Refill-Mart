@@ -77,29 +77,37 @@ function state:update(player, dt)
 	local accel = player.acceleration/mult
 	
 	if not player.flags.grounded then
-		accel = accel*0.5
-		decel = decel*0.5
+		accel = accel*0.75
+		decel = decel*0.75
 	end
 	if dir == -player.dir then
 		accel = accel*2.3
 	end
 	
-	if controls:isPressed('Run')
+	local keepMomentum = controls:isPressed('Run') or not player.flags.grounded
+	if keepMomentum
 	and (dir == player.dir 
 		and math.abs(player.momx) < speed 
 		or dir ~= player.dir)
-	or not controls:isPressed('Run') then
+	or not keepMomentum then
 		player.momx = lerp_clamp(player.momx+(accel*dir), -speed, speed, decel)
+	end
+
+	if player.flags.canmove
+	and player.flags.grounded
+	and controls:isJustPressed('Jump') then
+		player.flags.jumpheld = true
+		player.gravity = gravity/1.5
+		player.flags.grounded = false
+		player.momy = -14/1.5
+		player.sounds.jump:play()
 	end
 
 	handleAnimations(player)
 
-	if player.flags.canmove then
-		player.character:jump(player, 12)
-	end
-
-	if player.flags.jumpheld and not controls:isPressed('Jump') then
+	if player.flags.jumpheld and (not controls:isPressed('Jump') or player.momy >= 0) then
 		player.flags.jumpheld = false
+		player.gravity = gravity
 		if player.momy < 0 then
 			player.momy = player.momy*0.35
 		end
@@ -110,17 +118,18 @@ function state:update(player, dt)
 	end
 
 	if controls:isJustPressed('Weapon') then
-		player.fsm:changeState(player, "bat")
+		player:fsm("bat")
 		return
 	end
 	if controls:isJustPressed('Dodge') then
-		player.fsm:changeState(player, "dodge")
+		player:fsm("dodge")
 		return
 	end
 end
 
 function state:exit(player)
 	player.flags.jumpheld = false
+	player.gravity = gravity
 end
 
 function state:tileCollision(player, type)
