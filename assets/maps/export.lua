@@ -13,7 +13,8 @@ return{
   properties = {
     ["sw1"] = "1",
     ["sw2"] = "2",
-    ["sw3"] = "3"
+    ["sw3"] = "3",
+    ["music"] = "unstoppable"
   },
   tilesets = {
     {

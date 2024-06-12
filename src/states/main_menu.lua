@@ -1,4 +1,5 @@
 local buttonClass = require "src.objects.ui.button"
+local audioClass = require "src.objects.systems.manager.audio"
 
 function load()
 	local width,height = rs.game_width,rs.game_height
@@ -6,5 +7,17 @@ function load()
 	singlePlayerButton.onPress = function(self)
 		USFM:switchState('game')
 	end
+
 	add(singlePlayerButton)
+
+	audio = audioClass("assets/music/", "ogg", "stream")
+	audio:preload("music", "withyou", true)
+end
+
+function enter()
+	audio:play("music")
+end
+
+function exit()
+	audio:stopAll()
 end

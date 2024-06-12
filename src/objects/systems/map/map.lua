@@ -11,6 +11,7 @@ function map:new(path)
 	self.height = map.height
 	self.tWidth = map.tilewidth
 	self.tHeight = map.tileheight
+	self.properties = map.properties
 	self.tilesets = {}
 	self.layers = {}
 

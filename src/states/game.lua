@@ -1,6 +1,7 @@
 local playerClass = require "src.objects.game.enemy.player"
 local controlsClass = require "src.objects.systems.input.controls"
 local worldClass = require "src.objects.systems.manager.world"
+local audioClass = require "src.objects.systems.manager.audio"
 local mapClass = require "src.objects.systems.map.map"
 
 local canvas
@@ -35,6 +36,21 @@ local function stayInDeadzone()
 	camera.y = lume.lerp(camera.y, camFollow.y, 0.1)
 end
 
+local function setupMapAndWorld()
+	world = worldClass(add)
+	map = mapClass("export")
+
+	if map.playerPos then
+		px,py = map.playerPos.x,map.playerPos.y
+	end
+	
+	camera.x,camera.y = px,py
+	player.x,player.y = px,py
+
+	map:defineCollisions(world, camera)
+	world:addToWorld(player)
+end
+
 function load()
 	camFollow = {}
 	numOfPlayers = 0
@@ -42,28 +58,26 @@ function load()
 
 	controls = controlsClass(require "src.controls.game")
 
-	world = worldClass(add)
-	add(world)
-
-
 	local width = resolution_solution.game_width
 	local height = resolution_solution.game_height
 
 	camera = Camera()
 
-	map = mapClass("export")
-	map:defineCollisions(world, camera)
-	if map.playerPos then
-		px,py = map.playerPos.x,map.playerPos.y
-	end
-
-	camera.x,camera.y = px,py
-	player = playerClass(px,py,"poyo",numOfPlayers)
+	player = playerClass(0,0,"poyo",numOfPlayers)
 	player.controls = controls
-	world:addToWorld(player)
+
+	music = audioClass("assets/music/", "ogg", "stream")
+
+	setupMapAndWorld()
+	if map.properties
+	and map.properties.music then
+		music:preload("music", map.properties.music, true)
+	end
 end
 
-function enter(state) end
+function enter(state)
+	music:play("music")
+end
 function update(dt)
 	controls:update(dt)
 end
