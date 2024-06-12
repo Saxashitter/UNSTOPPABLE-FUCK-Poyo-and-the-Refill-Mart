@@ -26,7 +26,8 @@ local function isInButton(self, x, y)
 	and (y >= _y and y <= _y+self.height)
 end
 
-function buton:isClicked()
+function button:isClicked()
+	local touches = love.touch.getTouches()
 	local isClicked = false
 	for _,touch in pairs(touches) do
 		local x,y = love.touch.getPosition(touch)
@@ -47,7 +48,6 @@ function buton:isClicked()
 end
 
 function button:update(dt)
-	local touches = love.touch.getTouches()
 	local isClicked = self:isClicked()
 
 	self.wasPressed = self.pressed
