@@ -1,0 +1,14 @@
+{
+  "data": {
+    "2": {
+      "y1": 0,
+      "y2": 1,
+      "script": "tiles.slope"
+    },
+    "3": {
+      "y1": 1,
+      "y2": 0,
+      "script": "tiles.slope"
+    }
+  }
+}
