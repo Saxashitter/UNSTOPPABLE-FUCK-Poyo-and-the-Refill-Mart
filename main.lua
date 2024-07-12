@@ -2,22 +2,20 @@
 -- This engine aims to make platformer games in Love2D easier to make.
 -- You can use this in commercial/non-commercial projects for FREE. But all I ask is credit.
 
-require "globals"
-
-game = {}
+game = require "globals"
 local canvas
 
 -- LÖVE 0.10.2 fixed timestep loop, Lua version
 
 function love.load()
 	love.graphics.setDefaultFilter( 'nearest', 'nearest' )
-	resolution_solution.conf({
-		width = 960,
-		height = 540,
+	rs = resolution_solution
+	rs.conf({
+		game_width = game.width,
+		game_height = game.height,
 		scale_mode = 1
 	})
-	rs = resolution_solution
-	rs.setMode(960, 540, {resizable = true})
+	rs.setMode(rs.game_width, rs.game_height, {resizable = true})
 	canvas = love.graphics.newCanvas(rs.get_game_size())
 	USFM:switchState("main_menu")
 end
@@ -28,8 +26,7 @@ for _,h in pairs(love.handlers) do
 			USFM[_](...)
 		end
 		if _ == "resize" then
-			resolution_solution.resize()
-			game.width,game.height = ...
+			resolution_solution.resize(...)
 		end
 	end
 end

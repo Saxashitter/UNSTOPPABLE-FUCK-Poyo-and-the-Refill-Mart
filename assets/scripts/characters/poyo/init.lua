@@ -1,4 +1,4 @@
-local animationClass = require "src.objects.systems.manager.animation"
+local animationClass = require "src.manager.animation"
 local accel = .5
 local decel = .25
 local speed = 4

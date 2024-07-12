@@ -1,8 +1,8 @@
 LuaObject = require "classic"
-script = require"src.objects.systems.manager.script"()
+script = require"src.manager.script"()
 require "require"
 
-for _,i in pairs(require.tree "src.libs") do
+for _,i in pairs(require.tree "libs") do
 	_G[_] = i
 end
 
@@ -76,4 +76,9 @@ function string:split(sep)
 	return split
 end
 
-USFM:addStates("src.states")
+USFM:addStates("states")
+
+return {
+	width = 640,
+	height = 440
+}

@@ -59,9 +59,12 @@ function onColResolve(tile, obj, type)
 	if type == "y" then
 		local y = slope(tile, obj.x, obj.width*obj.scale)
 		if not obj.grounded then
+			if obj.y >= tile.y+(tile.height/2) then
+				return
+			end
 			if obj.y+obj.height >= y then
-				obj.y = y-(obj.height*obj.scale)
 				if obj.momy >= 0 then
+					obj.y = y-(obj.height*obj.scale)
 					obj.momy = 0
 					obj.grounded = true
 				end
